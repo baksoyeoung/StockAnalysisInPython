@@ -1,18 +1,20 @@
 import requests
+from PIL import Image
 import hashlib
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
-from PIL import Image
-
+# 2.8.1 리퀘스트로 인터넷에서 이미지 파일 가져오기
 url = 'http://bit.ly/2JnsHnT'
 r = requests.get(url, stream=True).raw
 
+# 2.8.2 필로우로 이미지 보여주기
 img = Image.open(r)
+print("img : ", img.get_format_mimetype)
 img.show()
 img.save('src.png')
-print(img.get_format_mimetype)
 
+# 2.8.3 'with ~ as 파일 객체:'로 이미지 파일 복사
 BUF_SIZE = 1024
 with open('src.png', 'rb') as sf, open('dst.png', 'wb') as df:
     while True:
@@ -21,6 +23,7 @@ with open('src.png', 'rb') as sf, open('dst.png', 'wb') as df:
             break
         df.write(data)
 
+# 2.8.4 SHA-256으로 파일 복사 검증하기
 sha_src = hashlib.sha256()
 sha_dst = hashlib.sha256()
 
@@ -29,18 +32,13 @@ with open('src.png', 'rb') as sf, open('dst.png', 'rb') as df:
     sha_dst.update(df.read())
 
 print("src.png's hash : {}".format(sha_src.hexdigest()))
-print("dst.png's hash : {}".format(sha_dst.hexdigest()))
+print("dsc.png's hash : {}".format(sha_dst.hexdigest()))
 
-dst_img = mpimg.imread('dst.png')
-print(dst_img)
-
-pseudo_img = dst_img [:,:, 0]
-print(pseudo_img)
-
+# 2.8.5 맷플롯립으로 이미지 가공하기
 plt.suptitle('Image Processing', fontsize=18)
-plt.subplot(1, 2, 1) #1행 2열의 행렬에서 첫번째 그림을 설정 하는 것
-plt.title('Origina Image')
-plt.imshow(mpimg.imread('src.png'))
+plt.subplot(1, 2, 1) # 1행 2열의 영역에서 첫 번째 영역으로 지정
+plt.title('Original Image')
+plt.imshow(mpimg.imread('src.png')) # 원본 파일을 읽어서 이미지로 표시
 
 plt.subplot(122) # 1행 2열의 영역에서 두 번째 영역으로 지정
 plt.title('Pseudocolor Image')
